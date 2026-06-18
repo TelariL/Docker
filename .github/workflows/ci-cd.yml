@@ -30,14 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build image
-        run: |
-          docker build --target test -t app-test .
-
-      - name: Wait for PostgreSQL
-        run: |
-          sleep 10
+      - name: Build test image
+        run: docker build --target test -t app-test .
 
       - name: Run tests
-        run: |
-          docker run --rm --network host app-test
+        run: docker run --rm app-test

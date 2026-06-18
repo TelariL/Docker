@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: wilbur
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+
+            cd ~/tasks/docker
+            git pull origin master
+
+            podman build -t kubsu .
+
+            podman rm -f kubsu || true
+
+            podman run -d \
+              --name kubsu \
+              --network host \
+              kubsu
