@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -10,18 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
+      - name: Build test image
         run: |
-          pip install .[test]
+          docker build --target test -t app-test .
 
       - name: Run tests
         run: |
-          pytest tests
+          docker run --rm app-test

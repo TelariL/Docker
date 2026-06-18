@@ -1,5 +1,12 @@
 .git
 .github
-pycache
+
 .pytest_cache
-*.рус
+__pycache__
+
+*.pyc
+*.pyo
+
+tests/
+
+README.md
