@@ -1,0 +1,5 @@
+.git
+.github
+pycache
+.pytest_cache
+*.рус
