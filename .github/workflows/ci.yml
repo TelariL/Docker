@@ -40,4 +40,5 @@ jobs:
       - name: Run tests
         run: pytest
         env:
+          PYTHONPATH: .
           DATABASE_URL: postgresql+psycopg://kubsu:kubsu@localhost:5432/kubsu
