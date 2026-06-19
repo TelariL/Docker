@@ -9,7 +9,6 @@ ENV PYTHONPATH=/app
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir .[test]
 
-
 FROM builder AS test
 
 ENV PYTHONPATH=/app
