@@ -9,39 +9,35 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-          script: |
-            set -e
+      - name: Deploy
+        run: |
+          set -e
 
-            cd ~/tasks/docker
+          cd ~/tasks/docker
 
-            echo "Pulling latest code..."
-            git pull origin master
+          echo "Pulling latest code..."
+          git pull origin master
 
-            echo "Building image..."
-            podman build -t kubsu .
+          echo "Building image..."
+          podman build -t kubsu .
 
-            echo "Stopping old container..."
-            podman stop kubsu || true
-            podman rm kubsu || true
+          echo "Stopping old container..."
+          podman stop kubsu || true
+          podman rm kubsu || true
 
-            echo "Starting new container..."
-            podman run -d \
-              --name kubsu \
-              --network host \
-              --restart=always \
-              kubsu
+          echo "Starting new container..."
+          podman run -d \
+            --name kubsu \
+            --network host \
+            --restart=always \
+            kubsu
 
-            echo "Waiting for app..."
-            sleep 5
+          echo "Waiting for app..."
+          sleep 5
 
-            curl -f http://127.0.0.1:8122/users/ || exit 1
+          curl -f http://127.0.0.1:8122/users/ || exit 1
 
-            echo "DEPLOY SUCCESS"
+          echo "DEPLOY SUCCESS"
