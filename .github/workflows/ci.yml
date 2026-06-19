@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: kubsu
+          POSTGRES_USER: kubsu
+          POSTGRES_PASSWORD: kubsu
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e .[test]
+
+      - name: Wait for postgres
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - name: Run tests
+        run: pytest
+        env:
+          DATABASE_URL: postgresql+psycopg://kubsu:kubsu@localhost:5432/kubsu
